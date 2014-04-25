@@ -1,6 +1,7 @@
 package fixtures.sample;
 
 import javax.ws.rs.*;
+import com.wordnik.swagger.annotations.ApiOperation;
 
 @Path("/foo")
 public class Service {
@@ -16,6 +17,13 @@ public class Service {
     @POST
     public int createSpeech(String speech) {
         return speech.hashCode();
+    }
+
+    @ApiOperation(value = "hidden", hidden = true)
+    @POST
+    @Consumes("text/plain")
+    public String duplicatedPathAndMethod(String input) {
+        return input;
     }
 
     @Path("/annotated")

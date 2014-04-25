@@ -8,6 +8,7 @@ import com.hypnoticocelot.jaxrs.doclet.model.Method;
 import com.hypnoticocelot.jaxrs.doclet.model.Model;
 import com.hypnoticocelot.jaxrs.doclet.translator.Translator;
 import com.sun.javadoc.*;
+import com.sun.javadoc.AnnotationDesc.ElementValuePair;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -37,6 +38,16 @@ public class ApiMethodParser {
         HttpMethod httpMethod = HttpMethod.fromMethod(methodDoc);
         if (httpMethod == null) {
             return null;
+        }
+        boolean merge = false;
+        for (AnnotationDesc desc : methodDoc.annotations()) {
+            for (ElementValuePair value : desc.elementValues()) {
+                if (value.element().qualifiedName().equals("com.wordnik.swagger.annotations.ApiOperation.hidden") &&
+                    value.value().value().equals(true)) {
+                    merge = true;
+                    return null;
+                }
+            }
         }
 
         String path = parentPath + firstNonNull(parsePath(methodDoc.annotations()), "");
